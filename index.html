@@ -1,0 +1,2161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>硅能源生产部员工行为规范榜单</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8f6f2 0%, #eae6df 100%);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><path fill="none" stroke="%239e9e9e" stroke-opacity="0.1" stroke-width="0.5" d="M20,20 Q40,5 60,20 T100,20 T140,20 T180,20 M20,60 Q40,45 60,60 T100,60 T140,60 T180,60 M20,100 Q40,85 60,100 T100,100 T140,100 T180,100 M20,140 Q40,125 60,140 T100,140 T140,140 T180,140 M20,180 Q40,165 60,180 T100,180 T140,180 T180,180"/></svg>');
+            color: #333;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 25px 0;
+            margin-bottom: 30px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-bottom: 4px solid #7a6b5d;
+            z-index: 10;
+        }
+        
+        h1 {
+            font-size: 3.2rem;
+            color: #5d4037;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(to right, #6b5d4f, #4a3c30);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: bold;
+            letter-spacing: 2px;
+            position: relative;
+            padding: 10px 0;
+        }
+        
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 4px;
+            background: linear-gradient(to right, transparent, #7a6b5d, transparent);
+            border-radius: 2px;
+        }
+        
+        .subtitle {
+            color: #6b5d4f;
+            font-size: 1.5rem;
+            margin-top: 10px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 18px 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .search-box input, .search-box select {
+            padding: 12px 18px;
+            border: 1px solid #d7ccc8;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            background: white;
+            min-width: 180px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        
+        .search-box input:focus, .search-box select:focus {
+            outline: none;
+            border-color: #8d6e63;
+            box-shadow: 0 0 0 3px rgba(141, 110, 99, 0.2);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .add-btn {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: white;
+        }
+        
+        .add-btn:hover {
+            background: linear-gradient(135deg, #43a047, #1b5e20);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+        }
+        
+        .reset-btn:hover {
+            background: linear-gradient(135deg, #fb8c00, #e65100);
+        }
+        
+        .import-btn {
+            background: linear-gradient(135deg, #2196F3, #0D47A1);
+            color: white;
+        }
+        
+        .import-btn:hover {
+            background: linear-gradient(135deg, #1E88E5, #0b2c5a);
+        }
+        
+        .export-btn {
+            background: linear-gradient(135deg, #9C27B0, #6A1B9A);
+            color: white;
+        }
+        
+        .export-btn:hover {
+            background: linear-gradient(135deg, #8E24AA, #4A148C);
+        }
+        
+        .record-btn {
+            background: linear-gradient(135deg, #607D8B, #37474F);
+            color: white;
+        }
+        
+        .record-btn:hover {
+            background: linear-gradient(135deg, #546E7A, #263238);
+        }
+        
+        .admin-btn {
+            background: linear-gradient(135deg, #FF5722, #E64A19);
+            color: white;
+        }
+        
+        .admin-btn:hover {
+            background: linear-gradient(135deg, #F4511E, #BF360C);
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 35px;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+        }
+        
+        .employee-grid {
+            flex: 4;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            max-height: 65vh;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+        
+        .warning-panel {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            min-width: 350px;
+            border-top: 6px solid #d32f2f;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .warning-panel::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #d32f2f, #f44336, #ff9800);
+        }
+        
+        .panel-title {
+            font-size: 1.8rem;
+            color: #d32f2f;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: bold;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .panel-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #d32f2f, transparent);
+        }
+        
+        .warning-list {
+            list-style: none;
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .warning-item {
+            padding: 15px 18px;
+            margin-bottom: 15px;
+            background: rgba(255, 235, 238, 0.7);
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            border-left: 5px solid #d32f2f;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .warning-item:hover {
+            background: rgba(255, 205, 210, 0.8);
+            transform: translateX(8px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .employee-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            min-height: 320px;
+        }
+        
+        .employee-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+            border-color: #8d6e63;
+        }
+        
+        .employee-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #8d6e63, #5d4037);
+        }
+        
+        .employee-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            position: relative;
+            min-height: 40px;
+        }
+        
+        .employee-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #5d4037;
+            cursor: pointer;
+            padding: 8px 10px;
+            border-radius: 6px;
+            width: 75%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+        
+        .employee-name:focus {
+            outline: none;
+            background: rgba(141, 110, 99, 0.1);
+            box-shadow: 0 0 0 2px rgba(141, 110, 99, 0.3);
+            border-color: #8d6e63;
+        }
+        
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #f44336;
+            font-size: 1.6rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 5px;
+            flex-shrink: 0;
+        }
+        
+        .delete-btn:hover {
+            transform: scale(1.2);
+            color: #d32f2f;
+        }
+        
+        .points-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .points-label {
+            font-size: 1.2rem;
+            color: #5d4037;
+            font-weight: bold;
+        }
+        
+        .points-display {
+            font-size: 2.2rem;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+            color: #5d4037;
+            background: rgba(141, 110, 99, 0.08);
+            padding: 5px 12px;
+            border-radius: 8px;
+        }
+        
+        .decrement-btn, .increment-btn {
+            color: white;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.6rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .decrement-btn {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+        }
+        
+        .decrement-btn:hover {
+            background: linear-gradient(135deg, #fb8c00, #e65100);
+            transform: scale(1.1);
+        }
+        
+        .decrement-btn:disabled {
+            background: #bdbdbd;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .increment-btn {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+        }
+        
+        .increment-btn:hover {
+            background: linear-gradient(135deg, #43a047, #1b5e20);
+            transform: scale(1.1);
+        }
+        
+        .employee-info {
+            display: flex;
+            flex-direction: column;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #d7ccc8;
+            color: #795548;
+            font-size: 1.05rem;
+            gap: 10px;
+            flex: 1;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .section, .team {
+            font-weight: bold;
+            color: #5d4037;
+            max-width: 70%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .points-bar {
+            height: 12px;
+            background: #e0e0e0;
+            border-radius: 8px;
+            margin-top: 15px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .points-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            border-radius: 8px;
+            transition: width 0.5s ease;
+        }
+        
+        .low-points {
+            background: linear-gradient(90deg, #f44336, #ff9800);
+        }
+        
+        .points-legend {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #757575;
+            margin-top: 8px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 850px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+            position: relative;
+            animation: modalAppear 0.4s ease;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        @keyframes modalAppear {
+            from { opacity: 0; transform: translateY(-60px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #757575;
+            transition: color 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            color: #d32f2f;
+        }
+        
+        .modal-title {
+            font-size: 2rem;
+            color: #5d4037;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #5d4037;
+            font-size: 1.1rem;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #d7ccc8;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #8d6e63;
+            box-shadow: 0 0 0 4px rgba(141, 110, 99, 0.2);
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #5d4037, #3e2723);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #4e342e, #2e1e1a);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        }
+        
+        .page-btn {
+            padding: 10px 20px;
+            background: white;
+            border: 1px solid #d7ccc8;
+            color: #5d4037;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .page-btn:hover, .page-btn.active {
+            background: #5d4037;
+            color: white;
+            border-color: #5d4037;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            flex: 1;
+            min-width: 220px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-value {
+            font-size: 2.8rem;
+            font-weight: bold;
+            color: #5d4037;
+            margin: 15px 0;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            color: #795548;
+            font-weight: bold;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            grid-column: 1 / -1;
+            color: #9e9e9e;
+        }
+        
+        .empty-state i {
+            font-size: 5rem;
+            margin-bottom: 25px;
+            display: block;
+            color: #d7ccc8;
+        }
+        
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .file-input {
+            padding: 15px;
+            border: 2px dashed #8d6e63;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-input:hover {
+            background: rgba(141, 110, 99, 0.05);
+            border-color: #5d4037;
+        }
+        
+        .file-input input {
+            display: none;
+        }
+        
+        .template-download {
+            text-align: center;
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(141, 110, 99, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .template-download:hover {
+            background: rgba(141, 110, 99, 0.2);
+        }
+        
+        /* 积分记录表格 */
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            flex: 1;
+            overflow-y: auto;
+            display: block;
+        }
+        
+        .records-table thead {
+            position: sticky;
+            top: 0;
+            background: #5d4037;
+            color: white;
+        }
+        
+        .records-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            background: #5d4037;
+            color: white;
+        }
+        
+        .records-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .records-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .records-table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .records-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-top: 10px;
+            border: 1px solid #d7ccc8;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        
+        .records-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .records-count {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #5d4037;
+        }
+        
+        /* 水墨风格装饰 */
+        .ink-decoration {
+            position: absolute;
+            opacity: 0.08;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .ink-1 {
+            top: 10%;
+            right: 5%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #5d4037 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .ink-2 {
+            bottom: 10%;
+            left: 5%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, #8d6e63 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .ink-3 {
+            top: 20%;
+            left: 10%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, #4a3c30 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .ink-stroke {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="none" stroke="%234a3c30" stroke-width="2" stroke-opacity="0.05" d="M20,50 Q50,20 80,50 T140,50 M30,100 Q60,70 90,100 T150,100 M40,150 Q70,120 100,150 T160,150" /></svg>');
+            background-size: 300px 300px;
+            z-index: -1;
+            opacity: 0.25;
+        }
+        
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(245, 241, 235, 0.8);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #a99e8f;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8d6e63;
+        }
+        
+        /* 管理员功能区 */
+        .admin-bar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            z-index: 20;
+        }
+        
+        .admin-info {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .admin-info i {
+            color: #FF5722;
+        }
+        
+        /* 登录模态框 */
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        /* 加分记录样式 */
+        .bonus-record {
+            background-color: rgba(236, 255, 236, 0.5);
+        }
+        
+        .bonus-record td:first-child {
+            position: relative;
+        }
+        
+        .bonus-record td:first-child::before {
+            content: "+";
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .deduction-record {
+            background-color: rgba(255, 236, 236, 0.5);
+        }
+        
+        .deduction-record td:first-child {
+            position: relative;
+        }
+        
+        .deduction-record td:first-child::before {
+            content: "-";
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: bold;
+            color: #F44336;
+        }
+        
+        /* 积分变更类型 */
+        .record-type {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+        
+        .bonus-type {
+            background: rgba(76, 175, 80, 0.2);
+            color: #2E7D32;
+        }
+        
+        .deduction-type {
+            background: rgba(244, 67, 54, 0.2);
+            color: #C62828;
+        }
+        
+        @media (max-width: 1200px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .warning-panel {
+                min-width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .employee-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 20px;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .action-buttons {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .records-table th, .records-table td {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+            
+            .admin-bar {
+                position: relative;
+                top: 0;
+                right: 0;
+                justify-content: flex-end;
+                margin-bottom: 15px;
+            }
+        }
+        
+        /* 游客提示 */
+        .visitor-info {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            border-left: 4px solid #2196F3;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            font-weight: bold;
+            color: #1565C0;
+        }
+        
+        /* 管理人员卡片特殊样式 */
+        .manager-card .employee-card::before {
+            background: linear-gradient(90deg, #3f51b5, #303f9f);
+        }
+        
+        .manager-card .points-progress {
+            background: linear-gradient(90deg, #2196F3, #03A9F4);
+        }
+    </style>
+</head>
+<body>
+    <div class="ink-decoration ink-1"></div>
+    <div class="ink-decoration ink-2"></div>
+    <div class="ink-decoration ink-3"></div>
+    <div class="ink-stroke"></div>
+    
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-medal"></i> 硅能源生产部员工行为规范榜单</h1>
+            <p class="subtitle">高效经营 · 执行到位</p>
+            
+            <!-- 管理员功能区 -->
+            <div class="admin-bar">
+                <div id="admin-info" class="admin-info" style="display: none;">
+                    <i class="fas fa-user-shield"></i>
+                    <span id="admin-name">管理员</span>
+                    <button id="logout-btn" class="admin-btn" style="padding: 6px 12px; font-size: 0.9rem;">
+                        <i class="fas fa-sign-out-alt"></i> 退出
+                    </button>
+                </div>
+                <button id="login-btn" class="admin-btn">
+                    <i class="fas fa-user-lock"></i> 管理员登录
+                </button>
+            </div>
+        </header>
+        
+        <!-- 游客提示 -->
+        <div id="visitor-info" class="visitor-info">
+            <i class="fas fa-info-circle"></i> 您当前以游客身份访问，只能查看和筛选数据。请登录管理员账号进行管理操作。
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="total-employees">0</div>
+                <div class="stat-label">总员工数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avg-points">12.0</div>
+                <div class="stat-label">平均积分</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="low-points">0</div>
+                <div class="stat-label">低积分员工</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="point-records">0</div>
+                <div class="stat-label">积分记录</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="搜索员工姓名...">
+                <select id="section-filter">
+                    <option value="">所有工段</option>
+                    <option value="还原工段">还原工段</option>
+                    <option value="后处理工段">后处理工段</option>
+                    <option value="回收工段">回收工段</option>
+                    <option value="精馏工段">精馏工段</option>
+                    <option value="冷氢化工段">冷氢化工段</option>
+                    <option value="公辅工段">公辅工段</option>
+                    <option value="管理人员">管理人员</option>
+                </select>
+                <select id="team-filter">
+                    <option value="">所有班组</option>
+                    <!-- 班组选项将通过JS动态生成 -->
+                </select>
+            </div>
+            <div class="action-buttons">
+                <button class="add-btn" id="add-employee-btn">
+                    <i class="fas fa-user-plus"></i> 添加员工
+                </button>
+                <button class="import-btn" id="import-employee-btn">
+                    <i class="fas fa-file-import"></i> 导入员工
+                </button>
+                <button class="export-btn" id="export-template-btn">
+                    <i class="fas fa-file-download"></i> 下载模板
+                </button>
+                <button class="reset-btn" id="reset-points">
+                    <i class="fas fa-sync-alt"></i> 重置积分
+                </button>
+                <button class="record-btn" id="view-records-btn">
+                    <i class="fas fa-clipboard-list"></i> 积分台账
+                </button>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="employee-grid" id="employee-grid">
+                <!-- 员工卡片将通过JS动态生成 -->
+            </div>
+            
+            <div class="warning-panel">
+                <h2 class="panel-title">积分不足员工 (<span id="low-point-count">0</span>)</h2>
+                <ul class="warning-list" id="warning-list">
+                    <!-- 低积分员工列表将通过JS动态生成 -->
+                </ul>
+            </div>
+        </div>
+        
+        <div class="pagination" id="pagination">
+            <!-- 分页按钮将通过JS动态生成 -->
+        </div>
+    </div>
+    
+    <!-- 添加员工模态框 -->
+    <div class="modal" id="add-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-add-modal">&times;</span>
+            <h2 class="modal-title">添加新员工</h2>
+            <form id="employee-form">
+                <div class="form-group">
+                    <label for="name"><i class="fas fa-user"></i> 员工姓名</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="section"><i class="fas fa-building"></i> 所属工段</label>
+                    <select id="section" required>
+                        <option value="还原工段">还原工段</option>
+                        <option value="后处理工段">后处理工段</option>
+                        <option value="回收工段">回收工段</option>
+                        <option value="精馏工段">精馏工段</option>
+                        <option value="冷氢化工段">冷氢化工段</option>
+                        <option value="公辅工段">公辅工段</option>
+                        <option value="管理人员">管理人员</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="team"><i class="fas fa-users"></i> 所属班组</label>
+                    <select id="team" required>
+                        <!-- 班组选项将通过JS动态生成 -->
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">添加员工</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 导入员工模态框 -->
+    <div class="modal" id="import-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-import-modal">&times;</span>
+            <h2 class="modal-title">导入员工信息</h2>
+            <div class="form-group">
+                <p>请下载Excel模板，填写员工信息后上传：</p>
+                <div class="template-download" id="download-template">
+                    <i class="fas fa-download"></i> 下载员工信息导入模板
+                </div>
+            </div>
+            <div class="file-upload">
+                <div class="file-input" id="file-drop-area">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #8d6e63; margin-bottom: 15px;"></i>
+                    <h3>拖放Excel文件到此处</h3>
+                    <p>或点击选择文件</p>
+                    <input type="file" id="excel-file" accept=".xlsx, .xls">
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="submit-btn" id="confirm-import" disabled>
+                    <i class="fas fa-file-import"></i> 确认导入
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 扣分记录模态框 -->
+    <div class="modal" id="deduct-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-deduct-modal">&times;</span>
+            <h2 class="modal-title">扣分记录</h2>
+            <form id="deduct-form">
+                <div class="form-group">
+                    <label for="deduct-reason"><i class="fas fa-exclamation-circle"></i> 扣分原因</label>
+                    <textarea id="deduct-reason" rows="3" required placeholder="请详细描述扣分原因..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="violation-time"><i class="fas fa-clock"></i> 违规时间</label>
+                    <input type="datetime-local" id="violation-time" required>
+                </div>
+                <div class="form-group">
+                    <label for="deduct-by"><i class="fas fa-user-tag"></i> 扣分人</label>
+                    <input type="text" id="deduct-by" required placeholder="请输入您的姓名">
+                </div>
+                <input type="hidden" id="deduct-employee-id">
+                <button type="submit" class="submit-btn">确认扣分</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 加分记录模态框 -->
+    <div class="modal" id="bonus-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-bonus-modal">&times;</span>
+            <h2 class="modal-title">加分记录</h2>
+            <form id="bonus-form">
+                <div class="form-group">
+                    <label for="bonus-reason"><i class="fas fa-star"></i> 加分原因</label>
+                    <textarea id="bonus-reason" rows="3" required placeholder="请详细描述加分原因..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="bonus-time"><i class="fas fa-clock"></i> 行为时间</label>
+                    <input type="datetime-local" id="bonus-time" required>
+                </div>
+                <div class="form-group">
+                    <label for="bonus-by"><i class="fas fa-user-tag"></i> 加分人</label>
+                    <input type="text" id="bonus-by" required placeholder="请输入您的姓名">
+                </div>
+                <input type="hidden" id="bonus-employee-id">
+                <button type="submit" class="submit-btn">确认加分</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 积分台账模态框 -->
+    <div class="modal" id="records-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-records-modal">&times;</span>
+            <h2 class="modal-title">积分台账</h2>
+            
+            <div class="records-header">
+                <div class="records-count">积分记录总数: <span id="records-count">0</span></div>
+                <div>
+                    <select id="record-type-filter" style="padding: 8px; border-radius: 8px; margin-right: 10px;">
+                        <option value="all">所有记录</option>
+                        <option value="bonus">加分记录</option>
+                        <option value="deduction">扣分记录</option>
+                    </select>
+                    <button class="reset-btn" id="clear-records">
+                        <i class="fas fa-trash-alt"></i> 清空记录
+                    </button>
+                </div>
+            </div>
+            
+            <div class="records-container">
+                <table class="records-table">
+                    <thead>
+                        <tr>
+                            <th>员工姓名</th>
+                            <th>工段</th>
+                            <th>班组</th>
+                            <th>变更类型</th>
+                            <th>原因</th>
+                            <th>行为时间</th>
+                            <th>操作人</th>
+                            <th>操作时间</th>
+                        </tr>
+                    </thead>
+                    <tbody id="records-body">
+                        <!-- 积分记录将通过JS动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 登录模态框 -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-login-modal">&times;</span>
+            <h2 class="modal-title">管理员登录</h2>
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user"></i> 用户名</label>
+                    <input type="text" id="username" required placeholder="请输入管理员账号">
+                </div>
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> 密码</label>
+                    <input type="password" id="password" required placeholder="请输入密码">
+                </div>
+                <button type="submit" class="submit-btn">登录</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 工段数据 - 新增管理人员分组
+        const sections = ['还原工段', '后处理工段', '回收工段', '精馏工段', '冷氢化工段', '公辅工段', '管理人员'];
+        
+        // 班组数据（根据工段）- 新增管理人员办公室分组
+        const teamsBySection = {
+            '还原工段': ['A1', 'A2', 'A3', 'A4', 'B1', 'B2', 'B3', 'B4', 'C1', 'C2', 'C3', 'C4', 'D1', 'D2', 'D3', 'D4', '装拆组'],
+            '冷氢化工段': ['A1', 'A2', 'A3', 'A4', 'B1', 'B2', 'B3', 'B4', '硅粉组'],
+            '后处理工段': ['单晶1#班', '单晶2#班', '单晶3#班', '成箱1#班', '成箱2#班', '成箱3#班', '提质班', '数据班'],
+            '回收工段': ['1班', '2班', '3班', '4班'],
+            '精馏工段': ['1班', '2班', '3班', '4班'],
+            '公辅工段': ['1班', '2班', '3班', '4班'],
+            '管理人员': ['生产部办公室', '后处理办公室', '还原办公室', '回收办公室', '精馏办公室', '公辅办公室', '冷氢化办公室']
+        };
+        
+        // 姓氏和名字
+        const surnames = ['张', '王', '李', '赵', '刘', '陈', '杨', '黄', '周', '吴'];
+        const names = ['伟', '芳', '娜', '秀英', '敏', '静', '丽', '强', '磊', '军', '洋', '勇', '艳', '杰', '娟', '涛', '明', '超', '秀兰', '霞'];
+        
+        // 员工数据和积分台账
+        let employees = [];
+        let pointRecords = [];
+        
+        // 管理员状态
+        let isAdmin = false;
+        const ADMIN_USERNAME = "admin";
+        const ADMIN_PASSWORD = "password123";
+        
+        // 生成初始员工数据 - 增加管理人员
+        function generateInitialEmployees() {
+            const initialEmployees = [];
+            
+            for (let i = 1; i <= 15; i++) {
+                const surname = surnames[Math.floor(Math.random() * surnames.length)];
+                const name = names[Math.floor(Math.random() * names.length)];
+                
+                // 管理人员占30%
+                const isManager = Math.random() < 0.3;
+                const section = isManager ? '管理人员' : sections[Math.floor(Math.random() * (sections.length - 1))];
+                
+                const team = teamsBySection[section][Math.floor(Math.random() * teamsBySection[section].length)];
+                
+                // 管理人员初始积分较高
+                const points = isManager ? 12 : Math.max(6, 12 - Math.floor(Math.random() * 6));
+                
+                initialEmployees.push({
+                    id: i,
+                    name: `${surname}${name}`,
+                    points: points,
+                    section: section,
+                    team: team,
+                    isManager: isManager
+                });
+            }
+            
+            return initialEmployees;
+        }
+        
+        // 初始化应用
+        function initApp() {
+            // 尝试从本地存储加载数据
+            const savedEmployees = localStorage.getItem('employees');
+            const savedRecords = localStorage.getItem('pointRecords');
+            
+            if (savedEmployees) {
+                employees = JSON.parse(savedEmployees);
+            } else {
+                employees = generateInitialEmployees();
+                saveEmployees();
+            }
+            
+            if (savedRecords) {
+                pointRecords = JSON.parse(savedRecords);
+            } else {
+                pointRecords = [];
+                savePointRecords();
+            }
+            
+            // 检查管理员登录状态
+            checkAdminStatus();
+            
+            // 更新班组筛选器
+            updateTeamFilter();
+            
+            // 渲染员工网格
+            renderEmployeeGrid();
+            
+            // 渲染低积分员工列表
+            renderLowPointsList();
+            
+            // 更新统计数据
+            updateStats();
+            
+            // 渲染分页
+            renderPagination();
+            
+            // 添加事件监听器
+            addEventListeners();
+        }
+        
+        // 检查管理员登录状态
+        function checkAdminStatus() {
+            const storedAdmin = localStorage.getItem('adminLoggedIn');
+            isAdmin = storedAdmin === 'true';
+            updateAdminUI();
+        }
+        
+        // 更新管理员UI状态
+        function updateAdminUI() {
+            const adminInfo = document.getElementById('admin-info');
+            const loginBtn = document.getElementById('login-btn');
+            const visitorInfo = document.getElementById('visitor-info');
+            
+            if (isAdmin) {
+                adminInfo.style.display = 'flex';
+                loginBtn.style.display = 'none';
+                visitorInfo.style.display = 'none';
+                
+                // 显示所有操作按钮
+                document.querySelectorAll('.action-buttons button').forEach(btn => {
+                    btn.style.display = 'flex';
+                });
+            } else {
+                adminInfo.style.display = 'none';
+                loginBtn.style.display = 'flex';
+                visitorInfo.style.display = 'block';
+                
+                // 隐藏操作按钮
+                document.querySelectorAll('.action-buttons button').forEach(btn => {
+                    btn.style.display = 'none';
+                });
+            }
+        }
+        
+        // 保存员工数据到本地存储
+        function saveEmployees() {
+            localStorage.setItem('employees', JSON.stringify(employees));
+        }
+        
+        // 保存积分记录
+        function savePointRecords() {
+            localStorage.setItem('pointRecords', JSON.stringify(pointRecords));
+        }
+        
+        // 更新班组筛选器
+        function updateTeamFilter() {
+            const teamFilter = document.getElementById('team-filter');
+            const selectedSection = document.getElementById('section-filter').value;
+            
+            // 清空现有选项
+            teamFilter.innerHTML = '<option value="">所有班组</option>';
+            
+            // 如果没有选择工段，则显示所有班组
+            if (!selectedSection) {
+                const allTeams = new Set();
+                employees.forEach(employee => allTeams.add(employee.team));
+                allTeams.forEach(team => {
+                    const option = document.createElement('option');
+                    option.value = team;
+                    option.textContent = team;
+                    teamFilter.appendChild(option);
+                });
+            } else {
+                // 显示选定工段的班组
+                teamsBySection[selectedSection].forEach(team => {
+                    const option = document.createElement('option');
+                    option.value = team;
+                    option.textContent = team;
+                    teamFilter.appendChild(option);
+                });
+            }
+        }
+        
+        // 渲染员工网格
+        function renderEmployeeGrid() {
+            const grid = document.getElementById('employee-grid');
+            grid.innerHTML = '';
+            
+            // 获取过滤条件
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const sectionFilter = document.getElementById('section-filter').value;
+            const teamFilter = document.getElementById('team-filter').value;
+            
+            // 过滤员工
+            const filteredEmployees = employees.filter(employee => {
+                const matchesSearch = employee.name.toLowerCase().includes(searchTerm);
+                const matchesSection = sectionFilter ? employee.section === sectionFilter : true;
+                const matchesTeam = teamFilter ? employee.team === teamFilter : true;
+                
+                return matchesSearch && matchesSection && matchesTeam;
+            });
+            
+            if (filteredEmployees.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-user-slash"></i>
+                        <h3>未找到匹配的员工</h3>
+                        <p>请尝试调整搜索条件</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 渲染员工卡片
+            filteredEmployees.forEach(employee => {
+                const cardWrapper = document.createElement('div');
+                // 管理人员卡片特殊样式
+                if (employee.section === '管理人员') {
+                    cardWrapper.className = 'manager-card';
+                }
+                
+                const card = document.createElement('div');
+                card.className = 'employee-card';
+                card.innerHTML = `
+                    <div class="employee-header">
+                        <div class="employee-name" ${isAdmin ? 'contenteditable="true"' : ''}>${employee.name}</div>
+                        ${isAdmin ? `<button class="delete-btn" data-id="${employee.id}"><i class="fas fa-trash-alt"></i></button>` : ''}
+                    </div>
+                    <div class="points-container">
+                        <span class="points-label">积分：</span>
+                        <span class="points-display">${employee.points}</span>
+                        ${isAdmin ? `
+                            <div style="display: flex; gap: 8px;">
+                                <button class="decrement-btn" data-id="${employee.id}" ${employee.points === 0 ? 'disabled' : ''}>-</button>
+                                <button class="increment-btn" data-id="${employee.id}">+</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="points-bar">
+                        <div class="points-progress ${employee.points < 6 ? 'low-points' : ''}" 
+                             style="width: ${Math.min(100, (employee.points / 12) * 100)}%"></div>
+                    </div>
+                    <div class="points-legend">
+                        <span>0</span>
+                        <span>12</span>
+                    </div>
+                    <div class="employee-info">
+                        <div class="info-row">
+                            <span>工段：</span>
+                            <span class="section">${employee.section}</span>
+                        </div>
+                        <div class="info-row">
+                            <span>班组：</span>
+                            <span class="team">${employee.team}</span>
+                        </div>
+                    </div>
+                `;
+                
+                cardWrapper.appendChild(card);
+                grid.appendChild(cardWrapper);
+            });
+            
+            // 添加事件监听器
+            addCardEventListeners();
+        }
+        
+        // 渲染低积分员工列表
+        function renderLowPointsList() {
+            const list = document.getElementById('warning-list');
+            list.innerHTML = '';
+            
+            // 获取积分低于6分的员工，按积分升序排序
+            const lowPointsEmployees = employees
+                .filter(employee => employee.points < 6)
+                .sort((a, b) => a.points - b.points)
+                .slice(0, 20);  // 显示前20名
+            
+            // 更新计数
+            document.getElementById('low-point-count').textContent = lowPointsEmployees.length;
+            
+            if (lowPointsEmployees.length === 0) {
+                list.innerHTML = '<li class="warning-item">暂无积分不足的员工</li>';
+                return;
+            }
+            
+            // 渲染列表项
+            lowPointsEmployees.forEach(employee => {
+                const listItem = document.createElement('li');
+                listItem.className = 'warning-item';
+                listItem.innerHTML = `
+                    <span class="low-point-name">${employee.name}</span>
+                    <span class="low-point-value">${employee.points}分 (${employee.section} - ${employee.team})</span>
+                `;
+                list.appendChild(listItem);
+            });
+        }
+        
+        // 渲染积分台账
+        function renderPointRecords() {
+            const tbody = document.getElementById('records-body');
+            tbody.innerHTML = '';
+            
+            const recordTypeFilter = document.getElementById('record-type-filter').value;
+            
+            // 过滤记录
+            let filteredRecords = [...pointRecords];
+            if (recordTypeFilter === 'bonus') {
+                filteredRecords = filteredRecords.filter(record => record.type === 'bonus');
+            } else if (recordTypeFilter === 'deduction') {
+                filteredRecords = filteredRecords.filter(record => record.type === 'deduction');
+            }
+            
+            document.getElementById('records-count').textContent = pointRecords.length;
+            
+            if (filteredRecords.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 30px; color: #9e9e9e;">
+                            <i class="fas fa-clipboard" style="font-size: 3rem; display: block; margin-bottom: 15px;"></i>
+                            暂无积分记录
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // 按时间倒序排列
+            filteredRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            filteredRecords.forEach(record => {
+                const row = document.createElement('tr');
+                row.className = record.type === 'bonus' ? 'bonus-record' : 'deduction-record';
+                
+                // 格式化时间
+                const eventTime = new Date(record.time);
+                const createdAt = new Date(record.createdAt);
+                
+                const formatTime = (date) => {
+                    return date.toLocaleString('zh-CN', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                };
+                
+                row.innerHTML = `
+                    <td>${record.employeeName}</td>
+                    <td>${record.section}</td>
+                    <td>${record.team}</td>
+                    <td>
+                        <span class="record-type ${record.type === 'bonus' ? 'bonus-type' : 'deduction-type'}">
+                            ${record.type === 'bonus' ? '加分' : '扣分'}
+                        </span>
+                    </td>
+                    <td>${record.reason}</td>
+                    <td>${formatTime(eventTime)}</td>
+                    <td>${record.by}</td>
+                    <td>${formatTime(createdAt)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // 更新统计数据
+        function updateStats() {
+            document.getElementById('total-employees').textContent = employees.length;
+            
+            // 计算平均积分
+            const totalPoints = employees.reduce((sum, employee) => sum + employee.points, 0);
+            const avgPoints = (totalPoints / employees.length).toFixed(1);
+            document.getElementById('avg-points').textContent = avgPoints;
+            
+            // 计算低积分员工数量
+            const lowPointsCount = employees.filter(employee => employee.points < 6).length;
+            document.getElementById('low-points').textContent = lowPointsCount;
+            
+            // 积分记录数量
+            document.getElementById('point-records').textContent = pointRecords.length;
+        }
+        
+        // 渲染分页
+        function renderPagination() {
+            // 实际应用中这里会根据数据量生成分页
+            // 本示例中省略了完整的分页逻辑
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = `
+                <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">4</button>
+                <button class="page-btn">5</button>
+                <button class="page-btn"><i class="fas fa-ellipsis-h"></i></button>
+                <button class="page-btn">20</button>
+                <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+            `;
+        }
+        
+        // 添加卡片事件监听器
+        function addCardEventListeners() {
+            // 减分按钮
+            document.querySelectorAll('.decrement-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    if (!isAdmin) {
+                        showAdminLogin();
+                        return;
+                    }
+                    
+                    const employeeId = parseInt(this.getAttribute('data-id'));
+                    const employee = employees.find(e => e.id === employeeId);
+                    
+                    if (employee && employee.points > 0) {
+                        // 显示扣分模态框
+                        document.getElementById('deduct-employee-id').value = employeeId;
+                        document.getElementById('deduct-modal').style.display = 'flex';
+                    }
+                });
+            });
+            
+            // 加分按钮
+            document.querySelectorAll('.increment-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    if (!isAdmin) {
+                        showAdminLogin();
+                        return;
+                    }
+                    
+                    const employeeId = parseInt(this.getAttribute('data-id'));
+                    document.getElementById('bonus-employee-id').value = employeeId;
+                    document.getElementById('bonus-modal').style.display = 'flex';
+                });
+            });
+            
+            // 删除按钮
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    if (!isAdmin) {
+                        showAdminLogin();
+                        return;
+                    }
+                    
+                    const employeeId = parseInt(this.getAttribute('data-id'));
+                    
+                    if (confirm('确定要删除该员工吗？')) {
+                        employees = employees.filter(e => e.id !== employeeId);
+                        saveEmployees();
+                        renderEmployeeGrid();
+                        renderLowPointsList();
+                        updateStats();
+                    }
+                });
+            });
+            
+            // 编辑姓名
+            document.querySelectorAll('.employee-name').forEach(nameElement => {
+                nameElement.addEventListener('blur', function() {
+                    if (!isAdmin) return;
+                    
+                    const employeeId = parseInt(this.closest('.employee-card').querySelector('.delete-btn').getAttribute('data-id'));
+                    const employee = employees.find(e => e.id === employeeId);
+                    
+                    if (employee) {
+                        const newName = this.textContent.trim();
+                        if (newName && newName !== employee.name) {
+                            employee.name = newName;
+                            saveEmployees();
+                        } else {
+                            this.textContent = employee.name;
+                        }
+                    }
+                });
+                
+                // 按回车键保存
+                nameElement.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.blur();
+                    }
+                });
+            });
+        }
+        
+        // 显示管理员登录
+        function showAdminLogin() {
+            document.getElementById('login-modal').style.display = 'flex';
+        }
+        
+        // 添加事件监听器
+        function addEventListeners() {
+            // 管理员登录按钮
+            document.getElementById('login-btn').addEventListener('click', showAdminLogin);
+            
+            // 管理员退出按钮
+            document.getElementById('logout-btn').addEventListener('click', function() {
+                isAdmin = false;
+                localStorage.setItem('adminLoggedIn', 'false');
+                updateAdminUI();
+                renderEmployeeGrid();
+                alert('您已成功退出管理员账号');
+            });
+            
+            // 关闭登录模态框
+            document.getElementById('close-login-modal').addEventListener('click', function() {
+                document.getElementById('login-modal').style.display = 'none';
+            });
+            
+            // 关闭加分模态框
+            document.getElementById('close-bonus-modal').addEventListener('click', function() {
+                document.getElementById('bonus-modal').style.display = 'none';
+            });
+            
+            // 登录表单提交
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                    isAdmin = true;
+                    localStorage.setItem('adminLoggedIn', 'true');
+                    document.getElementById('login-modal').style.display = 'none';
+                    updateAdminUI();
+                    renderEmployeeGrid();
+                    alert('管理员登录成功！');
+                } else {
+                    alert('用户名或密码错误！');
+                }
+            });
+            
+            // 搜索和筛选
+            document.getElementById('search-input').addEventListener('input', renderEmployeeGrid);
+            document.getElementById('section-filter').addEventListener('change', function() {
+                updateTeamFilter();
+                renderEmployeeGrid();
+            });
+            document.getElementById('team-filter').addEventListener('change', renderEmployeeGrid);
+            
+            // 添加员工按钮
+            document.getElementById('add-employee-btn').addEventListener('click', function() {
+                if (!isAdmin) {
+                    showAdminLogin();
+                    return;
+                }
+                
+                // 更新模态框中的班组选项
+                const modalTeamSelect = document.querySelector('#add-modal #team');
+                modalTeamSelect.innerHTML = '';
+                const section = document.querySelector('#add-modal #section').value;
+                teamsBySection[section].forEach(team => {
+                    const option = document.createElement('option');
+                    option.value = team;
+                    option.textContent = team;
+                    modalTeamSelect.appendChild(option);
+                });
+                
+                document.getElementById('add-modal').style.display = 'flex';
+            });
+            
+            // 关闭模态框
+            document.getElementById('close-add-modal').addEventListener('click', function() {
+                document.getElementById('add-modal').style.display = 'none';
+            });
+            
+            document.getElementById('close-import-modal').addEventListener('click', function() {
+                document.getElementById('import-modal').style.display = 'none';
+            });
+            
+            document.getElementById('close-deduct-modal').addEventListener('click', function() {
+                document.getElementById('deduct-modal').style.display = 'none';
+            });
+            
+            document.getElementById('close-records-modal').addEventListener('click', function() {
+                document.getElementById('records-modal').style.display = 'none';
+            });
+            
+            // 工段变化时更新班组选项
+            document.querySelector('#add-modal #section').addEventListener('change', function() {
+                const teamSelect = document.querySelector('#add-modal #team');
+                teamSelect.innerHTML = '';
+                const section = this.value;
+                teamsBySection[section].forEach(team => {
+                    const option = document.createElement('option');
+                    option.value = team;
+                    option.textContent = team;
+                    teamSelect.appendChild(option);
+                });
+            });
+            
+            // 提交添加员工表单
+            document.getElementById('employee-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('name').value.trim();
+                const section = document.getElementById('section').value;
+                const team = document.getElementById('team').value;
+                
+                if (name) {
+                    // 创建新员工
+                    const newId = employees.length > 0 ? Math.max(...employees.map(e => e.id)) + 1 : 1;
+                    const newEmployee = {
+                        id: newId,
+                        name: name,
+                        points: section === '管理人员' ? 12 : 12, // 管理人员初始积分
+                        section: section,
+                        team: team,
+                        isManager: section === '管理人员'
+                    };
+                    
+                    employees.push(newEmployee);
+                    saveEmployees();
+                    
+                    // 重置表单
+                    this.reset();
+                    
+                    // 关闭模态框
+                    document.getElementById('add-modal').style.display = 'none';
+                    
+                    // 重新渲染
+                    renderEmployeeGrid();
+                    renderLowPointsList();
+                    updateStats();
+                }
+            });
+            
+            // 重置积分按钮
+            document.getElementById('reset-points').addEventListener('click', function() {
+                if (!isAdmin) {
+                    showAdminLogin();
+                    return;
+                }
+                
+                if (confirm('确定要将所有员工积分重置为12分吗？')) {
+                    employees.forEach(employee => {
+                        employee.points = 12;
+                    });
+                    saveEmployees();
+                    renderEmployeeGrid();
+                    renderLowPointsList();
+                    updateStats();
+                }
+            });
+            
+            // 导入员工按钮
+            document.getElementById('import-employee-btn').addEventListener('click', function() {
+                if (!isAdmin) {
+                    showAdminLogin();
+                    return;
+                }
+                
+                document.getElementById('import-modal').style.display = 'flex';
+            });
+            
+            // 下载模板按钮
+            document.getElementById('export-template-btn').addEventListener('click', function() {
+                if (!isAdmin) {
+                    showAdminLogin();
+                    return;
+                }
+                
+                // 创建工作簿
+                const wb = XLSX.utils.book_new();
+                
+                // 创建表头
+                const header = ['姓名', '工段', '班组', '积分'];
+                
+                // 创建示例数据
+                const data = [
+                    header,
+                    ['张三', '还原工段', 'A1', 12],
+                    ['李四', '后处理工段', '单晶1#班', 12],
+                    ['王五', '冷氢化工段', '硅粉组', 12],
+                    ['赵六', '管理人员', '生产部办公室', 12]
+                ];
+                
+                // 创建工作表
+                const ws = XLSX.utils.aoa_to_sheet(data);
+                
+                // 将工作表添加到工作簿
+                XLSX.utils.book_append_sheet(wb, ws, '员工信息');
+                
+                // 导出文件
+                XLSX.writeFile(wb, '员工信息导入模板.xlsx');
+            });
+            
+            // 文件选择
+            document.getElementById('excel-file').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, {type: 'array'});
+                        
+                        // 获取第一个工作表
+                        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                        
+                        // 转换为JSON
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                        
+                        // 处理数据（跳过表头）
+                        const newEmployees = [];
+                        let nextId = employees.length > 0 ? Math.max(...employees.map(e => e.id)) + 1 : 1;
+                        
+                        for (let i = 1; i < jsonData.length; i++) {
+                            const row = jsonData[i];
+                            if (row.length >= 3) {
+                                const section = row[1] || sections[Math.floor(Math.random() * sections.length)];
+                                newEmployees.push({
+                                    id: nextId++,
+                                    name: row[0] || `员工${nextId}`,
+                                    section: section,
+                                    team: row[2] || teamsBySection[section] ? teamsBySection[section][0] : '1班',
+                                    points: row[3] || 12,
+                                    isManager: section === '管理人员'
+                                });
+                            }
+                        }
+                        
+                        if (newEmployees.length > 0) {
+                            // 替换原有员工数据
+                            employees = newEmployees;
+                            saveEmployees();
+                            
+                            // 关闭导入模态框
+                            document.getElementById('import-modal').style.display = 'none';
+                            
+                            // 重新渲染
+                            renderEmployeeGrid();
+                            renderLowPointsList();
+                            updateStats();
+                            
+                            alert(`成功导入 ${newEmployees.length} 名员工信息！`);
+                        } else {
+                            alert('未找到有效员工数据，请检查文件格式！');
+                        }
+                    };
+                    reader.readAsArrayBuffer(file);
+                }
+            });
+            
+            // 文件拖放
+            const dropArea = document.getElementById('file-drop-area');
+            dropArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.backgroundColor = 'rgba(141, 110, 99, 0.1)';
+            });
+            
+            dropArea.addEventListener('dragleave', function() {
+                this.style.backgroundColor = '';
+            });
+            
+            dropArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.backgroundColor = '';
+                
+                const file = e.dataTransfer.files[0];
+                if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.xls'))) {
+                    document.getElementById('excel-file').files = e.dataTransfer.files;
+                    // 触发change事件
+                    const event = new Event('change');
+                    document.getElementById('excel-file').dispatchEvent(event);
+                }
+            });
+            
+            // 扣分表单提交
+            document.getElementById('deduct-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const employeeId = parseInt(document.getElementById('deduct-employee-id').value);
+                const reason = document.getElementById('deduct-reason').value.trim();
+                const time = document.getElementById('violation-time').value;
+                const by = document.getElementById('deduct-by').value.trim();
+                
+                if (reason && time && by) {
+                    const employee = employees.find(e => e.id === employeeId);
+                    
+                    if (employee && employee.points > 0) {
+                        // 扣分
+                        employee.points--;
+                        
+                        // 添加扣分记录
+                        pointRecords.push({
+                            type: 'deduction',
+                            employeeId: employeeId,
+                            employeeName: employee.name,
+                            section: employee.section,
+                            team: employee.team,
+                            reason: reason,
+                            time: time,
+                            by: by,
+                            createdAt: new Date().toISOString()
+                        });
+                        
+                        saveEmployees();
+                        savePointRecords();
+                        
+                        // 关闭模态框
+                        document.getElementById('deduct-modal').style.display = 'none';
+                        
+                        // 重置表单
+                        this.reset();
+                        
+                        // 重新渲染
+                        renderEmployeeGrid();
+                        renderLowPointsList();
+                        updateStats();
+                        
+                        alert('扣分记录已保存！');
+                    }
+                } else {
+                    alert('请填写完整的扣分信息！');
+                }
+            });
+            
+            // 加分表单提交
+            document.getElementById('bonus-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const employeeId = parseInt(document.getElementById('bonus-employee-id').value);
+                const reason = document.getElementById('bonus-reason').value.trim();
+                const time = document.getElementById('bonus-time').value;
+                const by = document.getElementById('bonus-by').value.trim();
+                
+                if (reason && time && by) {
+                    const employee = employees.find(e => e.id === employeeId);
+                    
+                    if (employee) {
+                        // 加分
+                        employee.points++;
+                        
+                        // 添加加分记录
+                        pointRecords.push({
+                            type: 'bonus',
+                            employeeId: employeeId,
+                            employeeName: employee.name,
+                            section: employee.section,
+                            team: employee.team,
+                            reason: reason,
+                            time: time,
+                            by: by,
+                            createdAt: new Date().toISOString()
+                        });
+                        
+                        saveEmployees();
+                        savePointRecords();
+                        
+                        // 关闭模态框
+                        document.getElementById('bonus-modal').style.display = 'none';
+                        
+                        // 重置表单
+                        this.reset();
+                        
+                        // 重新渲染
+                        renderEmployeeGrid();
+                        renderLowPointsList();
+                        updateStats();
+                        
+                        alert('加分记录已保存！');
+                    }
+                } else {
+                    alert('请填写完整的加分信息！');
+                }
+            });
+            
+            // 查看积分台账
+            document.getElementById('view-records-btn').addEventListener('click', function() {
+                renderPointRecords();
+                document.getElementById('records-modal').style.display = 'flex';
+            });
+            
+            // 记录类型筛选变化
+            document.getElementById('record-type-filter').addEventListener('change', renderPointRecords);
+            
+            // 清空积分记录
+            document.getElementById('clear-records').addEventListener('click', function() {
+                if (!isAdmin) {
+                    showAdminLogin();
+                    return;
+                }
+                
+                if (confirm('确定要清空所有积分记录吗？此操作不可恢复！')) {
+                    pointRecords = [];
+                    savePointRecords();
+                    renderPointRecords();
+                    updateStats();
+                    alert('积分记录已清空！');
+                }
+            });
+        }
+        
+        // 页面加载时初始化应用
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
